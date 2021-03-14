@@ -1,0 +1,80 @@
+TF-IDF(Term Frequency - Inverse Document Frequency)
+정보 검색과 텍스트 마이닝에서 이용하는 가중치(TF*IDF)
+여러 문서로 이루어진 문서군이 있을 때 어떤 단어가 특정 문서 내에서 얼마나 중요한 것인지를 나타내는 통계적 수치
+핵심어 추출, 검색엔진에서 결과 순위 결정, 문서의 유사도검사
+
+TF(단어 빈도, term frequency)
+특정한 단어가 문서 내에 얼마나 자주 등장하는지를 나타내는 값
+이 값이 높을수록 문서에서 중요하다고 생각할 수 있다. 하지만 단어 자체가 문서군 내에서 자주 사용 되는 경우, 이것은 그 단어가 흔하게 등장한다는 것을 의미한다. 이것을 DF(문서 빈도, document frequency)라고 하며, 이 값의 역수를 IDF(역문서 빈도, inverse document frequency)라고 한다.
+
+IDF(역문서 빈도, inverse document frequency)
+IDF 값은 문서군의 성격에 따라 결정된다. 예를 들어 '원자'라는 낱말은 일반적인 문서들 사이에서는 잘 나오지 않기 때문에 IDF 값이 높아지고 문서의 핵심어가 될 수 있지만, 원자에 대한 문서를 모아놓은 문서군의 경우 이 낱말은 상투어가 되어 각 문서들을 세분화하여 구분할 수 있는 다른 낱말들이 높은 가중치를 얻게 된다.
+
+sprase representatinon
+	one-hot-endoding
+	n개의 단어에 대한 n차원의 벡터
+	단어가 커질 수록 무한대 차원의 벡터가 생성됨
+	주로 신경망의 입력단에 사용(신경망이 임베딩과정을 대체)
+	의미 유추 불가능<-무한대 차원의 벡터로 인해
+	차원의 저주:차원이 무한대로 커지면 정보추출이 어려워짐
+장점:
+	단어간의 유사도 측정에 용이
+	단어간의 관계 파악에 용이
+	벡터 연산을 통한 추론이 가능
+단점:
+	단어의 subword information 무시(서울-서울시-고양시)
+	our of vocabulary 에서 적용 불가능
+	문맥 고려 불가능
+	(개개의 자료를 하나의 단어에 벡터로 추가하기때문에 
+	여러 의미가 있다면 본질적인 의미가 퇴색되 버림)
+
+
+word2vec = word embeding
+	자연어의 의미를 벡터공간에 임베딩
+	CBOW(continuous bag of words model) : 주변 단어들을 통해서 중간의 단어를 예측하는 모델
+	skip gram 방식 : 중심 단어를 통해 주변단어를 예측하는 모델
+	1. 가운데 단어를 one-hot-vector로 만들어준다. 	
+	2. 파라미터 매트릭스인 WV×N를 중간 단어 one-hot vector에 곱해줘서 embedded vector를 구한다.
+	3. embedded vector를 두 번째 파라미터 매트릭스인 W′를 곱해서 score vector를 계산한다.
+	4. score vector에 대해서 확률값으로 만들어 준다.
+	5. 구한 확률값에 대해서 각 위치의 정답과 비교한다.
+	6. context의 주변 단어 모두를 예측하기 때문에 확률 값이 다음과 같이 2m개 나올것이다.
+	7.CBOW와의 차이점은 우리가 각 단어에 대해 독립이라고 가정을 한다는 것이다. 즉 중심 단어에 대해 주변 단어들을 완벽하게 독립적이라고 가정하는 것이다.
+
+
+	단어에 대한 밀집 벡터(dense vector)를 얻을 수 있음
+	
+	한정된 차원으로 표현가능
+	의미관계 유추 가능
+	비지도 학습으로 단어의 의미 학습 가능
+
+
+fasttext(facebook open source library,C++11)
+	기존의 word2vec과 유사, but 단어를 n-gram으로 나누어 학습 수행
+	n-gram 범위 2-5 assumtion -> as, su,,,,,,assum
+	oov에 대처 가능
+
+<언어모델>
+
+Markov 확률 기반의 언어모델
+	기본적인 언어 체인모델
+	딥러닝  기반 체인모델을 제작, 각각의 단어가 올 확률 계산, 곱->해당 문장이 올 확률
+
+RNN(Recurrent Neural Network)언어모델:
+	현재 단어(어절) + 이전 스텝의 히든 레이어 => 현재 히든 레이어 => 다음 상태 예측
+	이러한 과정때문에 맨 마지막 단어에 히든레이어를 통한 계산으로 다음 스텝을 예측한다는 것은 문맥 전체의 내용을 고려하여 다음 단어를 예측하는 것이기에 이는 문맥을 어느정도 파악하였다고 볼 수 있음
+	최종적으로 출력vector -> Context vector 이 된다는 뜻임
+	Context vector 값에 대해 classification layer를 붙이면 문장분류를 위한 신경망 모델이 됨
+
+	Seq2Seq(Sequence to Sequence):
+		Encode(RNN구조를 통한 Context vector 획득)
+		->Decode(획득된 Context vector를 입력으로 출력 예측
+		ex)번역 프로그램
+
+RNN구조적 문제점:
+	입력 sequence의 길이가 매우 긴 경우 처음에 나온 token에 대한 정보가 희석됨
+	고정된 context vector 사이즈로 인해 긴 sequence에 대한 정보 함축이 어려움
+	모든 token이 영향을 미침 <- 데이터간 중요도가 존재하지 않음
+
+->Attention 모델
+
