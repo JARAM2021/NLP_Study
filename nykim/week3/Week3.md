@@ -4,6 +4,7 @@
 - Attention Mechanism에만 기반한 **Transformer**라는 간단한 모델 제안
 - 병렬화와 학습시간 감소, 최고 수준의 품질
 - BLEU state-of-the-art
+
 **BLEU**
 > Bilingual Evaluation Understudy
 기계 번역 결과와 사람이 직접 번역한 결과가 얼마나 유사한지 비교하여 번역에 대한 성능 측정.    
@@ -37,3 +38,7 @@ X 행렬 -> Z 행렬에 self-attention이 적합한 이유 :
 1. layer당 전체 계산량 적음
 2. 계산의 병렬화 : 병렬적으로 한번에 많은 계산
 3. 장거리 의존성
+
+## Reference
+[Attention Is All You Need(Attention 논문 설명)](https://greeksharifa.github.io/nlp(natural%20language%20processing)%20/%20rnns/2019/08/17/Attention-Is-All-You-Need/)
+[Attention is all you need paper 뽀개기](https://pozalabs.github.io/transformer/)
