@@ -1,0 +1,41 @@
+Attention 모델
+	인간이 정보처리 할 때 모든 sequence를 고려하면서 처리하는 것이 아님
+	인간의 정보처리와 마찬가지로 중요한 feature을 더욱 중요하게 하는 모델
+	rnn의 보정을 위한 용도
+
+RNN셀의 각각의 output을 활용한다
+
+기존 rnn 모델에서 시작
+rnn 셀의 각 ouutput들을 입력으로 하는 feed forward fully connected layer
+해당 layer의 ouput을 각 rnn 셀의 score로 결정
+출력된 score에 softmax를 취함으로써 0-1 사이의 값으로 변환 -> attention weight
+attention weight와 hidden state를 곱해서 context vector 획득
+
+
+decoder 결과가 정답과 많이 다르다
+좋지 못한 context vector -> 좋지 못한 attention weight -> 조정
+
+feature들의 연결성을 볼 수 있어 딥러닝의 시각화가 가능해짐
+-> 피드백 가능해진다
+ex)NMT(neural machine translation)
+    STT(speech to text)
+
+문맥에 다라 동적으로 할당되는 encode의 attention weight로 인한 dynamic context vector 획득
+but! 여전히 rnn이 순차적으로 연산이 이뤄짐에 따라 연산속도가 느려짐
+
+-> self attention 모델
+attention 모델 학습 : rnn+attention에 적용된 attention은 decorder가 해석하기에 적합한 weight를 찾고자 노력
+attention이 decoder가 아니라 input인 값을 가장 잘 표현할 수 있도록 학습히면?
+-> 자기 자신을 가장 잘 표현할 수 있는 좋은 embedding
+	->self-attention 모델 탄생
+
+24분
+1단계 : 단어 임베딩
+2단계 : concat(둘 이상의 문자열을 입력한 순서대로 합쳐서 반환해주는 함수)
+3단계 : 3개의 weight vector 생성 -> Query
+
+multi-head self attention(버트에서 12개 동시 수행)
+Query,Key, Value로 구성된 attention layer를 동시에 여러개 수행
+
+transformer 모델
+multi-head self attention으로 이뤄진 encoder를 여러층 쌓아서 encoding을 수행(6번)
