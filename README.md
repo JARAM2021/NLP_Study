@@ -7,7 +7,7 @@
 ## fine-tuning
 기존의 학습되어 있는 모델을 기반으로 모델을 목적에 맞게 변형하고 이미 학습된 모델로부터 학습을 업데이트 하는 것이다.
 
-## Word2Vec
+# Word2Vec
 워드 임베딩(Word Embedding)은 단어를 벡터로 표현하는 방법으로, 단어를 밀집 표현으로 변환한다.
 
 - 희소 표현: 표현하고자 하는 단어의 인덱스의 값만 1이고, 나머지 인덱스에는 전부 0으로 표현되는 벡터 표현 방법(원 핫 인코딩) 이렇게 벡터 또는 행렬(matrix)의 값이 대부분이 0으로 표현되는 방법을 희소 표현(sparse representation)이라고 한다.
@@ -40,3 +40,27 @@ RNN(순환 신경망)에 기반한 모델에는 두가지 단점이 있는데,
 - 디코더에서 출력 단어를 예측하는 매 시점(time step)마다, 인코더에서의 전체 입력 문장을 다시 한 번 참고한다.
 - 전체 입력 문장을 전부 다 동일한 비율로 참고하는 것이 아니라, 해당 시점에서 예측해야할 단어와 연관이 있는 입력 단어 부분을 좀 더 **집중(attention)**해서 보게 된다.
 - Attention에는 여러 종류가 있다. 스코어 함수의 계산식에 차이가 있고 dot, location−base, scaled dot, general, concat 등 여러 방법이 있다.
+
+# BERT
+- 사전 훈련 언어모델
+- 특정 과제를 하기 전 사전 훈련 Embedding을 통해 특정 과제의 성능을 더 좋게 할 수 있는 언어모델
+
+BERT를 사용하지 않은 일반적인 모델링 과정은 (분류를 원하는 데이터->모델->분류) 순서이지만,
+BERT를 사용하면 (관련 말뭉치->BERT->분류를 원하는 데이터->모델->분류) 순서로 이루어진다.
+
+## BERT의 내부 동작 과정
+### 1. INPUT
+BERT Input : Token Embedding + Segment Embedding + Position Embedding
+
+#### Token Embedding
+- Word Piece 임베딩 방식 사용 [Word Piece](https://lovit.github.io/nlp/2018/04/02/wpm/)
+  -각 Char 단위로 임베딩을 한다.
+  -자주 등장하면서 가장 긴 길이의 sub-word를 하나의 단위로 만든다.
+  -이는 이전에 자주 등장하지 않았던 단어를 모조리 'OOV'처리하여 모델링의 성능을 저하했던 'OOV'문제도 해결 할 수 있다.
+  
+#### Segment Embedding
+- 토큰 시킨 단어들을 다시 하나의 문장으로 만드는 작업이다.
+- 두개의 문장을 구분자([SEP])를 넣어 구분하고 그 두 문장을 하나의 Segment로 지정하여 입력한다.
+
+#### Position Embedding
+- Token 순대로 인코딩을 한다.
